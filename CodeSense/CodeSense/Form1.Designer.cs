@@ -36,6 +36,7 @@
             pictureBox2 = new PictureBox();
             pictureBox3 = new PictureBox();
             pictureBox4 = new PictureBox();
+            btnDarkMode = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -115,12 +116,24 @@
             pictureBox4.TabIndex = 6;
             pictureBox4.TabStop = false;
             // 
+            // btnDarkMode
+            // 
+            btnDarkMode.FlatStyle = FlatStyle.Flat;
+            btnDarkMode.Location = new Point(684, 435);
+            btnDarkMode.Name = "btnDarkMode";
+            btnDarkMode.Size = new Size(104, 36);
+            btnDarkMode.TabIndex = 7;
+            btnDarkMode.Text = "Dark Mode";
+            btnDarkMode.UseVisualStyleBackColor = true;
+            // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
             BackColor = SystemColors.ActiveBorder;
             ClientSize = new Size(800, 496);
+            Controls.Add(btnDarkMode);
             Controls.Add(pictureBox4);
             Controls.Add(pictureBox3);
             Controls.Add(pictureBox2);
@@ -147,5 +160,6 @@
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
         private PictureBox pictureBox4;
+        private Button btnDarkMode;
     }
 }
