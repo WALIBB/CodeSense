@@ -109,8 +109,9 @@ namespace CodeSense
             // 
             // pictureBox2
             // 
+            pictureBox2.BackColor = Color.Transparent;
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(555, 196);
+            pictureBox2.Location = new Point(573, 261);
             pictureBox2.Name = "pictureBox2";
             pictureBox2.Size = new Size(155, 179);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
@@ -119,8 +120,9 @@ namespace CodeSense
             // 
             // pictureBox3
             // 
+            pictureBox3.BackColor = Color.Transparent;
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(-10, 196);
+            pictureBox3.Location = new Point(-20, 56);
             pictureBox3.Name = "pictureBox3";
             pictureBox3.Size = new Size(142, 179);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
