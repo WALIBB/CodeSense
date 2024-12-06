@@ -4,60 +4,58 @@ using System.Text.RegularExpressions;
 
 namespace CodeSense
 {
-    public class CSharpStatementAnalyzer : StatementAnalyzer
+    public class CSharpStatementAnalyzer : IStatementAnalyzer
     {
-        public override string AnalyzeStatement(string statement)
+        public string AnalyzeStatement(string statement)
         {
             statement = statement.Trim();
 
             if (statement.StartsWith("\"") && statement.EndsWith("\""))
                 return $"{statement} is a string";
+
             if (statement.StartsWith("//") || statement.StartsWith("/"))
                 return $"{statement} is a comment";
-
 
             if (IsMathExpression(statement))
                 return $"{statement} is a mathematical expression";
 
-          
             if (Regex.IsMatch(statement, @"^\s*if\s*\(.*\)\s*$"))
                 return $"{statement} is a conditional statement";
 
             if (Regex.IsMatch(statement, @"^\s*else\s+if\s*\(.*\)\s*$"))
                 return $"{statement} is a conditional statement";
 
-            
             if (Regex.IsMatch(statement, @"^\s*else\s+if\s*$"))
                 return $"{statement} is a keyword";
 
-            
             if (Regex.IsMatch(statement, @"^\s*(if|else\s+if)\s+.*$"))
                 return $"{statement} is an invalid conditional statement";
 
-            
             if (Regex.IsMatch(statement, @"^\s*using\s+\w+(\.\w+)*\s*$"))
                 return $"{statement} is an invalid directive (;)";
 
-            
             if (Regex.IsMatch(statement, @"^\s*using\s+[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*\s*;\s*$"))
                 return $"{statement} is a directive";
 
-          
             if (Regex.IsMatch(statement, @"^\s*\w+\s*\=\s*.*$"))
             {
                 if (!statement.EndsWith(";"))
                 {
-                    return $"{statement} is an invalid assignment (;)";
+                    return $"{statement} is an invalid assignment (missing semicolon)";
                 }
                 return $"{statement} is an assignment";
             }
 
-            
             if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char" }, type => type == statement))
                 return $"{statement} is a data type";
 
-          
             return AnalyzeTokens(statement);
+        }
+
+        private bool IsMathExpression(string statement)
+        {
+            // Checks for basic mathematical operators: +, -, *, /, %
+            return Regex.IsMatch(statement, @"\+|\-|\*|\/|\%");
         }
 
         private string AnalyzeTokens(string statement)
@@ -80,6 +78,13 @@ namespace CodeSense
             }
 
             return result.ToString();
+        }
+
+        // Tokenize the statement into individual words
+        private string[] Tokenize(string statement)
+        {
+            // Tokenization logic: split by non-alphanumeric characters (spaces, operators, etc.)
+            return Regex.Split(statement, @"([^\w]+)").Where(token => !string.IsNullOrEmpty(token)).ToArray();
         }
     }
 }

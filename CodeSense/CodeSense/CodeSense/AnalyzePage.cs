@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace CodeSense
 {
     public partial class AnalyzePage : Form
     {
-        private readonly StatementAnalyzer analyzer;
+        private readonly IStatementAnalyzer analyzer; // Injected via constructor
 
-        public AnalyzePage(string language)
+        // Constructor now only takes an IStatementAnalyzer
+        public AnalyzePage(IStatementAnalyzer statementAnalyzer)
         {
             InitializeComponent();
 
-           
-            lblLanguage.Text = "Selected Language: " + language;
+            analyzer = statementAnalyzer;  
+
+            
+            lblLanguage.Text = $"Selected Language: {analyzer.GetType().Name.Replace("StatementAnalyzer", "")}";
             lblLanguage.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 
            
@@ -25,17 +26,6 @@ namespace CodeSense
                 (ClientSize.Width - lblLanguage.Width) / 2,
                 textBox1.Location.Y - lblLanguage.Height - 10
             );
-
-         
-            if (language == "Python")
-                analyzer = new PythonStatementAnalyzer();
-            else if (language == "C#")
-                analyzer = new CSharpStatementAnalyzer();
-            else if (language == "C++")
-                analyzer = new CppStatementAnalyzer();
-
-            else
-                throw new ArgumentException("Unsupported language");
         }
 
         private void DetectButton_Click(object sender, EventArgs e)
@@ -61,14 +51,17 @@ namespace CodeSense
 
             
             FinalResult.Size = TextRenderer.MeasureText(FinalResult.Text, FinalResult.Font);
+
+           
             FinalResult.Location = new Point(
-                (ClientSize.Width - FinalResult.Width) / 2,
-                label2.Location.Y + label2.Height + 10
+                (ClientSize.Width - FinalResult.Width) / 2, 
+                label2.Location.Y + label2.Height + 10  
             );
         }
 
         private void AnalyzeBack_Click(object sender, EventArgs e)
         {
+            
             LanguageSelect languageSelectPage = new LanguageSelect();
             languageSelectPage.Show();
             this.Hide();

@@ -95,7 +95,6 @@ namespace CodeSense
             Cspic.SizeMode = PictureBoxSizeMode.Zoom;
             Cspic.TabIndex = 4;
             Cspic.TabStop = false;
-            Cspic.Click += Cspic_Click;
             // 
             // label2
             // 
