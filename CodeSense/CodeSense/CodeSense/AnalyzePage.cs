@@ -7,9 +7,9 @@ namespace CodeSense
 {
     public partial class AnalyzePage : Form
     {
-        private readonly IStatementAnalyzer analyzer; // Injected via constructor
+        private readonly IStatementAnalyzer analyzer; 
 
-        // Constructor now only takes an IStatementAnalyzer
+        
         public AnalyzePage(IStatementAnalyzer statementAnalyzer)
         {
             InitializeComponent();

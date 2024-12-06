@@ -62,8 +62,11 @@ namespace CodeSense
 
             foreach (var token in tokens)
             {
-                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return" }, keyword => keyword == token))
+                // Checking for keywords including nullptr
+                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return", "nullptr" }, keyword => keyword == token))
                     result.AppendLine($"{token} is a keyword");
+                else if (Array.Exists(new[] { "std::cout", "std::cin", "std::cerr", "std::clog", "std::getline", "std::string", "std::to_string", "std::abs", "std::sqrt", "std::pow", "std::ceil", "std::floor", "std::round", "std::log", "std::exp", "std::sin", "std::cos", "std::tan", "std::asin", "std::acos", "std::atan", "std::sort", "std::reverse", "std::min", "std::max", "std::count", "std::find", "std::binary_search", "std::vector", "std::map", "std::set", "std::unordered_map", "std::unordered_set", "std::queue", "std::stack", "std::make_shared", "std::make_unique", "std::shared_ptr", "std::unique_ptr", "std::rand", "std::srand", "std::chrono::duration", "std::chrono::time_point", "std::this_thread::sleep_for", "std::move", "std::swap", "std::forward" }, op => op == token))
+                    result.AppendLine($"{token} is a built-in function");
                 else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!" }, op => op == token))
                     result.AppendLine($"{token} is an operator");
                 else if (double.TryParse(token, out _))
@@ -82,13 +85,11 @@ namespace CodeSense
 
         private bool IsMathExpression(string statement)
         {
-            
             return Regex.IsMatch(statement, @"^\s*[\d+\-*/%().\s]+\s*$");
         }
 
         private string[] Tokenize(string statement)
         {
-           
             return Regex.Split(statement, @"(\s+|[+\-*/%=();,<>!&|])").Where(token => !string.IsNullOrWhiteSpace(token)).ToArray();
         }
     }

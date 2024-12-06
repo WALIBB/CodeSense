@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace CodeSense
 {
@@ -11,7 +12,7 @@ namespace CodeSense
             statement = statement.Trim();
 
             if (statement.StartsWith("\"") && statement.EndsWith("\""))
-                return $"{statement} is a string";
+                return $"{statement} is a string literal";
 
             if (statement.StartsWith("//") || statement.StartsWith("/"))
                 return $"{statement} is a comment";
@@ -46,7 +47,7 @@ namespace CodeSense
                 return $"{statement} is an assignment";
             }
 
-            if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char" }, type => type == statement))
+            if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char", "decimal", "long", "short", "byte", "sbyte", "uint", "ulong", "ushort", "object", "var" }, type => type == statement))
                 return $"{statement} is a data type";
 
             return AnalyzeTokens(statement);
@@ -54,7 +55,6 @@ namespace CodeSense
 
         private bool IsMathExpression(string statement)
         {
-            // Checks for basic mathematical operators: +, -, *, /, %
             return Regex.IsMatch(statement, @"\+|\-|\*|\/|\%");
         }
 
@@ -65,14 +65,30 @@ namespace CodeSense
 
             foreach (var token in tokens)
             {
-                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return" }, keyword => keyword == token))
+               
+                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return", "class", "namespace", "public", "private", "protected", "internal", "static", "readonly", "const", "new", "try", "catch", "finally", "throw", "await", "async", "delegate", "event", "this", "base", "using", "virtual", "override", "abstract", "interface", "enum", "struct", "in", "out", "ref" }, keyword => keyword == token))
                     result.AppendLine($"{token} is a keyword");
-                else if (Array.Exists(new[] { "std::cout", "std::cin", "std::cerr", "std::clog", "std::getline", "std::string", "std::to_string", "std::abs", "std::sqrt", "std::pow", "std::ceil", "std::floor", "std::round", "std::log", "std::exp", "std::sin", "std::cos", "std::tan", "std::asin", "std::acos", "std::atan", "std::sort", "std::reverse", "std::min", "std::max", "std::count", "std::find", "std::binary_search", "std::vector", "std::map", "std::set", "std::unordered_map", "std::unordered_set", "std::queue", "std::stack", "std::make_shared", "std::make_unique", "std::shared_ptr", "std::unique_ptr", "std::rand", "std::srand", "std::chrono::duration", "std::chrono::time_point", "std::this_thread::sleep_for", "std::move", "std::swap", "std::forward" }, op => op == token))
-                    result.AppendLine($"{token} is a built-in function");
-                else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!" }, op => op == token))
+
+           
+                else if (Array.Exists(new[] { "Console.WriteLine", "Console.ReadLine", "Console.Read", "Convert.ToString", "Convert.ToInt32", "Convert.ToDouble", "Math.Abs", "Math.Sqrt", "Math.Pow", "Math.Ceiling", "Math.Floor", "Math.Round", "Math.Log", "Math.Exp", "Math.Sin", "Math.Cos", "Math.Tan", "Math.Asin", "Math.Acos", "Math.Atan", "Array.Sort", "Array.Reverse", "List<T>.Add", "List<T>.Remove", "Dictionary<TKey, TValue>.Add", "Dictionary<TKey, TValue>.Remove", "Task.Delay", "Task.WhenAll", "Task.WhenAny", "async", "await", "string.Concat", "string.Join", "string.Split", "string.Replace", "string.ToLower", "string.ToUpper", "string.Contains", "string.IndexOf", "string.Substring", "string.Trim", "File.Exists", "File.ReadAllText", "Directory.Exists", "Path.Combine", "Path.GetDirectoryName", "Guid.NewGuid", "DateTime.Now", "DateTime.Parse" }, op => op == token))
+                    result.AppendLine($"{token} is a built-in function or method");
+
+               
+                else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!", "=", "+=", "-=", "*=", "/=", "%=" }, op => op == token))
                     result.AppendLine($"{token} is an operator");
+
+              
+                else if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char", "decimal", "long", "short", "byte", "sbyte", "uint", "ulong", "ushort", "object", "var" }, type => type == token))
+                    result.AppendLine($"{token} is a data type");
+
+                else if (Regex.IsMatch(token, @"^[a-zA-Z_][a-zA-Z0-9_]*$"))
+                    result.AppendLine($"{token} is an identifier");
+
+               
                 else if (double.TryParse(token, out _))
                     result.AppendLine($"{token} is a number");
+
+                
                 else
                     result.AppendLine($"{token} is a variable");
             }
@@ -80,11 +96,11 @@ namespace CodeSense
             return result.ToString();
         }
 
-        // Tokenize the statement into individual words
         private string[] Tokenize(string statement)
         {
-            // Tokenization logic: split by non-alphanumeric characters (spaces, operators, etc.)
-            return Regex.Split(statement, @"([^\w]+)").Where(token => !string.IsNullOrEmpty(token)).ToArray();
+          
+            var tokens = Regex.Split(statement, @"([^\w\.]+)").Where(token => !string.IsNullOrEmpty(token)).ToArray();
+            return tokens;
         }
     }
 }
