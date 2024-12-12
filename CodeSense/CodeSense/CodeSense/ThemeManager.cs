@@ -1,108 +1,101 @@
 ﻿using System;
 using System.Drawing;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 namespace CodeSense
 {
-    public enum AppTheme
-    {
-        DefaultMode,  
-        LightMode,    
-        DarkMode      
-    }
-
     public static class ThemeManager
     {
+        public enum Mode { Default, Light, Dark }
+
+        public static Mode CurrentMode { get; private set; } = Mode.Default;
+
         
-        public static AppTheme CurrentTheme { get; set; } = AppTheme.DefaultMode;
+        public static event Action<Mode> OnThemeChanged;
+
+        
+        public static void SetTheme(Mode mode)
+        {
+            if (CurrentMode != mode)
+            {
+                CurrentMode = mode;
+                OnThemeChanged?.Invoke(mode);
+            }
+        }
 
        
         public static void ApplyTheme(Form form)
         {
-            switch (CurrentTheme)
+            
+            switch (CurrentMode)
             {
-                case AppTheme.DarkMode:
-                    ApplyDarkMode(form);
+                case Mode.Dark:
+                    form.BackColor = Color.FromArgb(18, 18, 18); 
+                    UpdateControls(form.Controls, Color.White, Color.DarkSlateGray); 
                     break;
 
-                case AppTheme.LightMode:
-                    ApplyLightMode(form);
+                case Mode.Light:
+                    form.BackColor = Color.White; 
+                    UpdateControls(form.Controls, Color.Black, Color.LightGray); 
                     break;
 
-                case AppTheme.DefaultMode:
-                    ApplyDefaultMode(form);
+                default: 
+                    form.BackColor = SystemColors.ActiveBorder;
+                    UpdateControls(form.Controls, Color.Black, SystemColors.Control); 
                     break;
             }
-        }
 
-        private static void ApplyDarkMode(Form form)
-        {
-            form.BackColor = Color.FromArgb(45, 45, 48);
-            form.ForeColor = Color.White;
-
+            
             foreach (Control control in form.Controls)
             {
-                if (control is Button)
+                if (control is Button button)
                 {
-                    control.BackColor = Color.FromArgb(30, 30, 30);
-                    control.ForeColor = Color.White;
-                }
-                else if (control is Label)
-                {
-                    control.ForeColor = Color.White;
-                }
-                else if (control is TextBox)
-                {
-                    control.BackColor = Color.FromArgb(30, 30, 30);
-                    control.ForeColor = Color.White;
-                }
-            }
-        }
+                    
+                    if (button.Name == "DetectButton")
+                    {
+                        button.BackColor = Color.Red; 
+                        button.ForeColor = Color.Yellow; 
+                    }
 
-        private static void ApplyLightMode(Form form)
-        {
-            form.BackColor = Color.White;
-            form.ForeColor = Color.Black;
-
-            foreach (Control control in form.Controls)
-            {
-                if (control is Button)
-                {
-                    control.BackColor = Color.LightGray;
-                    control.ForeColor = Color.Black;
-                }
-                else if (control is Label)
-                {
-                    control.ForeColor = Color.Black;
-                }
-                else if (control is TextBox)
-                {
-                    control.BackColor = Color.White;
-                    control.ForeColor = Color.Black;
+                    
+                    if (button.Name == "StartButton")
+                    {
+                        button.BackColor = Color.Red; 
+                        button.ForeColor = Color.Yellow; 
+                    }
                 }
             }
         }
 
-        private static void ApplyDefaultMode(Form form)
+      
+        private static void UpdateControls(Control.ControlCollection controls, Color textColor, Color backgroundColor)
         {
-            form.BackColor = SystemColors.Control;
-            form.ForeColor = Color.Black;
-
-            foreach (Control control in form.Controls)
+            foreach (Control control in controls)
             {
-                if (control is Button)
+                if (control is Label label)
                 {
-                    control.BackColor = Color.Red;  
-                    control.ForeColor = Color.Orange;  
+                    label.ForeColor = textColor;
                 }
-                else if (control is Label)
+                else if (control is Button button)
                 {
-                    control.ForeColor = Color.Black;  
+                    button.ForeColor = textColor;
+                    button.BackColor = backgroundColor;
                 }
-                else if (control is TextBox)
+                else if (control is TextBox textBox)
                 {
-                    control.BackColor = Color.White;  
-                    control.ForeColor = Color.Black;  
+                    textBox.ForeColor = textColor;
+                    textBox.BackColor = backgroundColor;
+                }
+                else if (control is Panel panel)
+                {
+                    panel.BackColor = backgroundColor;
+                    UpdateControls(panel.Controls, textColor, backgroundColor); 
+                }
+                else if (control is GroupBox groupBox)
+                {
+                    groupBox.ForeColor = textColor;
+                    UpdateControls(groupBox.Controls, textColor, backgroundColor); 
                 }
             }
         }
