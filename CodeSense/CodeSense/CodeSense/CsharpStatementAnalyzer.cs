@@ -12,7 +12,7 @@ namespace CodeSense
             statement = statement.Trim();
 
             if (statement.StartsWith("\"") && statement.EndsWith("\""))
-                return $"{statement} is a string literal";
+                return $"{statement} is a string";
 
             if (statement.StartsWith("//") || statement.StartsWith("/"))
                 return $"{statement} is a comment";

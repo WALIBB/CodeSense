@@ -30,6 +30,7 @@ namespace CodeSense
             pictureBox2 = new PictureBox();
             pictureBox3 = new PictureBox();
             AnalyzeBack = new Button();
+            result = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -141,10 +142,19 @@ namespace CodeSense
             AnalyzeBack.UseVisualStyleBackColor = false;
             AnalyzeBack.Click += AnalyzeBack_Click;
             // 
+            // result
+            // 
+            result.AutoSize = true;
+            result.Location = new Point(299, 231);
+            result.Name = "result";
+            result.Size = new Size(0, 20);
+            result.TabIndex = 10;
+            // 
             // AnalyzePage
             // 
             BackColor = SystemColors.ActiveBorder;
             ClientSize = new Size(699, 471);
+            Controls.Add(result);
             Controls.Add(AnalyzeBack);
             Controls.Add(pictureBox3);
             Controls.Add(pictureBox2);
@@ -173,6 +183,7 @@ namespace CodeSense
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
         private Button AnalyzeBack;
+        private Label result;
     }
 }
 

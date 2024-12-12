@@ -1,98 +1,68 @@
 using System;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Security.Policy;
+using System.Windows.Forms;
 
 namespace CodeSense
 {
     public partial class HomePage : Form
     {
-     
-        private enum Mode
-        {
-            Default,
-            Light,
-            Dark
-        }
-
-        private Mode currentMode = Mode.Default;  
-
         public HomePage()
         {
             InitializeComponent();
+
+           
             StartButton.Click += new EventHandler(StartButton_Click);
             btnDarkMode.Click += new EventHandler(BtnDarkMode_Click);
-            ApplyDefaultMode();  
+
+            
+            ApplyTheme();
+
+            
+            ThemeManager.OnThemeChanged += OnThemeChanged;
         }
 
-       
         private void BtnDarkMode_Click(object sender, EventArgs e)
         {
-            switch (currentMode)
+            
+            switch (ThemeManager.CurrentMode)
             {
-                case Mode.Default:
-                    ApplyLightMode();  
-                    currentMode = Mode.Light;
-                    btnDarkMode.Text = "Dark Mode"; 
+                case ThemeManager.Mode.Default:
+                    ThemeManager.SetTheme(ThemeManager.Mode.Light);
                     break;
-                case Mode.Light:
-                    ApplyDarkMode();  
-                    currentMode = Mode.Dark;
-                    btnDarkMode.Text = "Default Mode"; 
+                case ThemeManager.Mode.Light:
+                    ThemeManager.SetTheme(ThemeManager.Mode.Dark);
                     break;
-                case Mode.Dark:
-                    ApplyDefaultMode();  
-                    currentMode = Mode.Default;
-                    btnDarkMode.Text = "Light Mode"; 
+                case ThemeManager.Mode.Dark:
+                    ThemeManager.SetTheme(ThemeManager.Mode.Default);
                     break;
             }
         }
 
-        
-        private void ApplyDarkMode()
+        private void ApplyTheme()
         {
-            this.BackColor = Color.FromArgb(18, 18, 18);  
-            AppTitle.ForeColor = Color.White; 
-            Tagline.ForeColor = Color.White; 
-            StartButton.BackColor = Color.DarkSlateGray;
-            StartButton.ForeColor = Color.White;
-            btnDarkMode.BackColor = Color.DarkSlateGray;
-            btnDarkMode.ForeColor = Color.White;
-            pictureBox1.BackColor = Color.Transparent;
-            pictureBox2.BackColor = Color.Transparent;
-            pictureBox3.BackColor = Color.Transparent;
-            pictureBox4.BackColor = Color.Transparent;
+          
+            ThemeManager.ApplyTheme(this);
+
+            
+            switch (ThemeManager.CurrentMode)
+            {
+                case ThemeManager.Mode.Default:
+                    btnDarkMode.Text = "Light Mode";
+                    break;
+                case ThemeManager.Mode.Light:
+                    btnDarkMode.Text = "Dark Mode";
+                    break;
+                case ThemeManager.Mode.Dark:
+                    btnDarkMode.Text = "Default Mode";
+                    break;
+            }
         }
 
-    
-        private void ApplyLightMode()
+        private void OnThemeChanged(ThemeManager.Mode mode)
         {
-            this.BackColor = Color.White;  
-            AppTitle.ForeColor = Color.Black;  
-            Tagline.ForeColor = Color.Black;  
-            StartButton.BackColor = Color.Red;
-            StartButton.ForeColor = Color.Orange;
-            btnDarkMode.BackColor = Color.LightGray;
-            btnDarkMode.ForeColor = Color.Black;
-            pictureBox1.BackColor = Color.Transparent;
-            pictureBox2.BackColor = Color.Transparent;
-            pictureBox3.BackColor = Color.Transparent;
-            pictureBox4.BackColor = Color.Transparent;
-        }
-
-        
-        private void ApplyDefaultMode()
-        {
-            this.BackColor = SystemColors.ActiveBorder;  
-            AppTitle.ForeColor = Color.Black;  
-            Tagline.ForeColor = Color.Black;  
-            StartButton.BackColor = Color.Red;
-            StartButton.ForeColor = Color.Orange;
-            btnDarkMode.BackColor = Color.LightGray;
-            btnDarkMode.ForeColor = Color.Black;
-            pictureBox1.BackColor = Color.Transparent;
-            pictureBox2.BackColor = Color.Transparent;
-            pictureBox3.BackColor = Color.Transparent;
-            pictureBox4.BackColor = Color.Transparent;
+           
+            ApplyTheme();
         }
 
         private void StartButton_Click(object sender, EventArgs e)
@@ -101,5 +71,14 @@ namespace CodeSense
             languageSelectForm.Show();
             this.Hide();
         }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            
+            ThemeManager.OnThemeChanged -= OnThemeChanged;
+            base.OnFormClosed(e);
+        }
     }
 }
+
+

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 namespace CodeSense
@@ -8,11 +9,28 @@ namespace CodeSense
         public LanguageSelect()
         {
             InitializeComponent();
+
+            
+            ApplyTheme();
+
+            
+            ThemeManager.OnThemeChanged += OnThemeChanged;
+        }
+
+        private void ApplyTheme()
+        {
+            
+            ThemeManager.ApplyTheme(this);
+        }
+
+        private void OnThemeChanged(ThemeManager.Mode mode)
+        {
+           
+            ApplyTheme();
         }
 
         private void Pythonselect_Click(object sender, EventArgs e)
         {
-            
             IStatementAnalyzer analyzer = new PythonStatementAnalyzer();
             AnalyzePage analyzePage = new AnalyzePage(analyzer);
             analyzePage.Show();
@@ -21,7 +39,6 @@ namespace CodeSense
 
         private void Csselect_Click(object sender, EventArgs e)
         {
-            
             IStatementAnalyzer analyzer = new CSharpStatementAnalyzer();
             AnalyzePage analyzePage = new AnalyzePage(analyzer);
             analyzePage.Show();
@@ -30,7 +47,6 @@ namespace CodeSense
 
         private void Cppselect_Click(object sender, EventArgs e)
         {
-            
             IStatementAnalyzer analyzer = new CppStatementAnalyzer();
             AnalyzePage analyzePage = new AnalyzePage(analyzer);
             analyzePage.Show();
@@ -43,5 +59,13 @@ namespace CodeSense
             homePage.Show();
             this.Close();
         }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            
+            ThemeManager.OnThemeChanged -= OnThemeChanged;
+            base.OnFormClosed(e);
+        }
     }
 }
+
