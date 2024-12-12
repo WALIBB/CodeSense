@@ -83,6 +83,16 @@ namespace CodeSense.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _6841042 {
+            get {
+                object obj = ResourceManager.GetObject("6841042", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap _76818 {
             get {
                 object obj = ResourceManager.GetObject("76818", resourceCulture);
@@ -96,6 +106,26 @@ namespace CodeSense.Properties {
         internal static System.Drawing.Bitmap Back_Transparent_Background_PNG {
             get {
                 object obj = ResourceManager.GetObject("Back-Transparent-Background-PNG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap code_icon_png_5 {
+            get {
+                object obj = ResourceManager.GetObject("code-icon-png-5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap code_icon_png_51 {
+            get {
+                object obj = ResourceManager.GetObject("code-icon-png-51", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

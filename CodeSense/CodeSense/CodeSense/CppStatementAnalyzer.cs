@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace CodeSense
 {
@@ -9,50 +10,135 @@ namespace CodeSense
         public string AnalyzeStatement(string statement)
         {
             statement = statement.Trim();
+                  
+           
+            if (statement == "cout")
+                return "cout is a shorthand for std::cout (used for output).";
+            if (statement == "std::cout")
+                return "std::cout is used for output in C++.";
 
-            if (statement.StartsWith("\"") && statement.EndsWith("\""))
-                return $"{statement} is a string";
+            
+            if (statement.StartsWith("std::cout"))
+                return AnalyzeCout(statement);
+            if (statement.StartsWith("if"))
+                return AnalyzeIfStatement(statement);
 
-            if (statement.StartsWith("//") || statement.StartsWith("/*"))
-                return $"{statement} is a comment";
+            
+            return AnalyzeTokens(statement);
+        }
 
-            if (statement.StartsWith("#"))
-                return $"{statement} is a header";
 
-            if (IsMathExpression(statement))
-                return $"{statement} is a mathematical expression";
+        private string AnalyzeCout(string statement)
+        {
+            statement = statement.Trim();
 
-            if (Regex.IsMatch(statement, @"^\s*if\s*\(.*\)\s*$"))
-                return $"{statement} is a conditional statement";
+        
+    
+            if (!statement.StartsWith("std::cout") && !statement.StartsWith("cout"))
+                return $"{statement} is an invalid output statement (missing cout)";
+            if (!statement.Contains("<<"))
+                return $"{statement} is an invalid output statement (missing <<)";
+            if (!statement.EndsWith(";"))
+                return $"{statement} is an invalid output statement (missing semicolon)";
+            if (!statement.Contains('"'))
+                return $"{statement} is an invalid output statement";
 
-            if (Regex.IsMatch(statement, @"^\s*else\s+if\s*\(.*\)\s*$"))
-                return $"{statement} is a conditional statement";
-
-            if (Regex.IsMatch(statement, @"^\s*else\s+if\s*$"))
-                return $"{statement} is a keyword";
-
-            if (Regex.IsMatch(statement, @"^\s*(if|else\s+if)\s+.*$"))
-                return $"{statement} is an invalid conditional statement";
-
-            if (Regex.IsMatch(statement, @"^\s*using\s+\w+(\.\w+)*\s*$"))
-                return $"{statement} is an invalid directive (;)";
-
-            if (Regex.IsMatch(statement, @"^\s*using\s+[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*\s*;\s*$"))
-                return $"{statement} is a directive";
-
-            if (Regex.IsMatch(statement, @"^\s*\w+\s*\=\s*.*$"))
+           
+            var match = Regex.Match(statement, @"(std::cout|cout)\s*<<\s*(.*);");
+            if (match.Success)
             {
-                if (!statement.EndsWith(";"))
-                {
-                    return $"{statement} is an invalid assignment (;)";
-                }
-                return $"{statement} is an assignment";
+                string output = match.Groups[2].Value.Trim();
+                return $"This code will print {output}";
             }
 
-            if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char" }, type => type == statement))
-                return $"{statement} is a data type";
+            return $"{statement} is an invalid output statement";
+        }
 
-            return AnalyzeTokens(statement);
+
+        private string AnalyzeCin(string statement)
+        {
+         
+            statement = statement.Trim();
+
+            
+            if (!statement.StartsWith("std::cin"))
+                return $"{statement} is an invalid input statement (missing std::cin)";
+            if (!statement.Contains(">>"))
+                return $"{statement} is an invalid input statement (>>)";
+            if (!statement.EndsWith(";"))
+                return $"{statement} is an invalid input statement (missing semicolon)";
+
+           
+            var match = Regex.Match(statement, @"std::cin\s*>>\s*(.*);");
+            if (match.Success)
+            {
+                string inputVariable = match.Groups[1].Value.Trim();
+                return $"This code will read input into: {inputVariable}";
+            }
+
+            return $"{statement} is an invalid input statement";
+        }
+
+        
+        private string AnalyzeIfStatement(string statement)
+        {
+            statement = statement.Trim();
+
+            if (!statement.StartsWith("if"))
+                return "Invalid conditional statement (missing 'if')";
+
+            var match = Regex.Match(statement, @"if\s*\(([^)]+)\)\s*(\{.*\}|[^\{]*[^{};]+)?\s*;?");
+
+            if (match.Success)
+            {
+                string condition = match.Groups[1].Value.Trim();
+                string codeInsideBlock = match.Groups[2].Value?.Trim();
+
+                bool conditionIsTrue = EvaluateCondition(condition);
+
+                if (string.IsNullOrEmpty(codeInsideBlock))
+                    return $"The condition is {(conditionIsTrue ? "true" : "false")}, but no code inside the block.";
+
+                if (conditionIsTrue)
+                {
+                    if (codeInsideBlock.StartsWith("{") && codeInsideBlock.EndsWith("}"))
+                    {
+                        codeInsideBlock = codeInsideBlock[1..^1].Trim(); 
+                    }
+                    return $"The condition is true, {AnalyzeCout(codeInsideBlock)}";
+                }
+                else
+                {
+                    return "The condition is false, no output will be printed.";
+                }
+            }
+
+            return "Invalid conditional statement (invalid format)";
+        }
+        
+        private bool EvaluateCondition(string condition)
+        {
+           
+            var match = Regex.Match(condition, @"(\d+)\s*(<=|>=|<|>|==|!=)\s*(\d+)");
+            if (match.Success)
+            {
+                int leftOperand = int.Parse(match.Groups[1].Value);
+                string operatorSymbol = match.Groups[2].Value;
+                int rightOperand = int.Parse(match.Groups[3].Value);
+
+                return operatorSymbol switch
+                {
+                    ">" => leftOperand > rightOperand,
+                    "<" => leftOperand < rightOperand,
+                    "==" => leftOperand == rightOperand,
+                    ">=" => leftOperand >= rightOperand,
+                    "<=" => leftOperand <= rightOperand,
+                    "!=" => leftOperand != rightOperand,
+                    _ => false
+                };
+            }
+
+            return false; 
         }
 
         private string AnalyzeTokens(string statement)
@@ -62,10 +148,10 @@ namespace CodeSense
 
             foreach (var token in tokens)
             {
-                // Checking for keywords including nullptr
+              
                 if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return", "nullptr" }, keyword => keyword == token))
                     result.AppendLine($"{token} is a keyword");
-                else if (Array.Exists(new[] { "std::cout", "std::cin", "std::cerr", "std::clog", "std::getline", "std::string", "std::to_string", "std::abs", "std::sqrt", "std::pow", "std::ceil", "std::floor", "std::round", "std::log", "std::exp", "std::sin", "std::cos", "std::tan", "std::asin", "std::acos", "std::atan", "std::sort", "std::reverse", "std::min", "std::max", "std::count", "std::find", "std::binary_search", "std::vector", "std::map", "std::set", "std::unordered_map", "std::unordered_set", "std::queue", "std::stack", "std::make_shared", "std::make_unique", "std::shared_ptr", "std::unique_ptr", "std::rand", "std::srand", "std::chrono::duration", "std::chrono::time_point", "std::this_thread::sleep_for", "std::move", "std::swap", "std::forward" }, op => op == token))
+                else if (Array.Exists(new[] { "std::cout", "std::cin", "std::cerr", "std::clog", "std::getline", "std::string", "std::to_string" }, op => op == token))
                     result.AppendLine($"{token} is a built-in function");
                 else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!" }, op => op == token))
                     result.AppendLine($"{token} is an operator");
@@ -83,14 +169,11 @@ namespace CodeSense
             return result.ToString();
         }
 
-        private bool IsMathExpression(string statement)
-        {
-            return Regex.IsMatch(statement, @"^\s*[\d+\-*/%().\s]+\s*$");
-        }
-
         private string[] Tokenize(string statement)
         {
             return Regex.Split(statement, @"(\s+|[+\-*/%=();,<>!&|])").Where(token => !string.IsNullOrWhiteSpace(token)).ToArray();
         }
     }
 }
+
+

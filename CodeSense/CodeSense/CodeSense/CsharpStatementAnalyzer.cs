@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Security.Policy;
 
 namespace CodeSense
 {
@@ -10,52 +11,115 @@ namespace CodeSense
         public string AnalyzeStatement(string statement)
         {
             statement = statement.Trim();
+            StringBuilder result = new StringBuilder();
 
-            if (statement.StartsWith("\"") && statement.EndsWith("\""))
-                return $"{statement} is a string";
-
-            if (statement.StartsWith("//") || statement.StartsWith("/"))
-                return $"{statement} is a comment";
-
-            if (IsMathExpression(statement))
-                return $"{statement} is a mathematical expression";
-
-            if (Regex.IsMatch(statement, @"^\s*if\s*\(.*\)\s*$"))
-                return $"{statement} is a conditional statement";
-
-            if (Regex.IsMatch(statement, @"^\s*else\s+if\s*\(.*\)\s*$"))
-                return $"{statement} is a conditional statement";
-
-            if (Regex.IsMatch(statement, @"^\s*else\s+if\s*$"))
-                return $"{statement} is a keyword";
-
-            if (Regex.IsMatch(statement, @"^\s*(if|else\s+if)\s+.*$"))
-                return $"{statement} is an invalid conditional statement";
-
-            if (Regex.IsMatch(statement, @"^\s*using\s+\w+(\.\w+)*\s*$"))
-                return $"{statement} is an invalid directive (;)";
-
-            if (Regex.IsMatch(statement, @"^\s*using\s+[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*\s*;\s*$"))
-                return $"{statement} is a directive";
-
-            if (Regex.IsMatch(statement, @"^\s*\w+\s*\=\s*.*$"))
+          
+            if (Regex.IsMatch(statement, @"^\s*(\d+)\s*(<=|>=|<|>|==|!=)\s*(\d+)\s*$"))
+            {
+                result.AppendLine($"{statement} is a conditional statement");
+            }
+            
+            else if (Regex.IsMatch(statement, @"^\s*Console\.(WriteLine|ReadLine)\s*\(.*\)\s*;?$"))
+            {
+                if (statement.Contains("WriteLine"))
+                    result.AppendLine(AnalyzeConsoleWriteLine(statement));
+                if (statement.Contains("ReadLine"))
+                    result.AppendLine(AnalyzeReadLine(statement));
+            }
+            
+            else if (Regex.IsMatch(statement, @"^\s*if\s*\(.*\)\s*\{?.*\}\s*$"))
+            {
+                result.AppendLine(AnalyzeIfStatement(statement));
+            }
+            else if (Regex.IsMatch(statement, @"^\s*\w+\s*\=\s*.*$"))
             {
                 if (!statement.EndsWith(";"))
                 {
-                    return $"{statement} is an invalid assignment (missing semicolon)";
+                    result.AppendLine($"{statement} is an invalid assignment (missing semicolon)");
                 }
-                return $"{statement} is an assignment";
+                else
+                {
+                    result.AppendLine($"{statement} is an assignment");
+                }
+            }
+            else
+            {
+                result.AppendLine(AnalyzeTokens(statement));
             }
 
-            if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char", "decimal", "long", "short", "byte", "sbyte", "uint", "ulong", "ushort", "object", "var" }, type => type == statement))
-                return $"{statement} is a data type";
+            return result.ToString().Trim();
+        }
+    
 
-            return AnalyzeTokens(statement);
+
+
+        private string AnalyzeConsoleWriteLine(string statement)
+        {
+            var match = Regex.Match(statement, @"Console\.WriteLine\s*\((.*)\);");
+            if (match.Success)
+            {
+                string message = match.Groups[1].Value.Trim();
+                if (string.IsNullOrEmpty(message))
+                    return $"{statement} is an invalid Console.WriteLine statement (no content).";
+                return $"This code will print: {message}";
+            }
+            return $"{statement} is an invalid Console.WriteLine statement";
         }
 
-        private bool IsMathExpression(string statement)
+        private string AnalyzeReadLine(string statement)
         {
-            return Regex.IsMatch(statement, @"\+|\-|\*|\/|\%");
+            var match = Regex.Match(statement, @"Console\.ReadLine\s*\((.*)\);");
+            if (match.Success)
+            {
+                string argument = match.Groups[1].Value.Trim();
+                if (string.IsNullOrEmpty(argument))
+                    return $"{statement} is an invalid Console.ReadLine statement (no argument).";
+                return $"This code will read input into: {argument}";
+            }
+            return $"{statement} is an invalid Console.ReadLine statement";
+        }
+
+        private string AnalyzeIfStatement(string statement)
+        {
+            var match = Regex.Match(statement, @"if\s*\(([^)]+)\)\s*(\{[^}]*\}|\S+)?");
+            if (match.Success)
+            {
+                string condition = match.Groups[1].Value.Trim();
+                string block = match.Groups[2].Value.Trim();
+                bool conditionIsTrue = EvaluateCondition(condition);
+
+                if (string.IsNullOrEmpty(block))
+                    return $"The condition is {(conditionIsTrue ? "true" : "false")}, but no code inside the block.";
+                if (block.StartsWith("{") && block.EndsWith("}"))
+                {
+                    block = block[1..^1].Trim();
+                }
+                return conditionIsTrue ? $"The condition is true, and the code executed: {AnalyzeConsoleWriteLine(block)}" : "The condition is false, so no code will be executed.";
+            }
+            return $"{statement} is an invalid if statement";
+        }
+
+        private bool EvaluateCondition(string condition)
+        {
+            var match = Regex.Match(condition, @"(\d+)\s*(<=|>=|<|>|==|!=)\s*(\d+)");
+            if (match.Success)
+            {
+                int leftOperand = int.Parse(match.Groups[1].Value);
+                string operatorSymbol = match.Groups[2].Value;
+                int rightOperand = int.Parse(match.Groups[3].Value);
+
+                return operatorSymbol switch
+                {
+                    ">" => leftOperand > rightOperand,
+                    "<" => leftOperand < rightOperand,
+                    "==" => leftOperand == rightOperand,
+                    ">=" => leftOperand >= rightOperand,
+                    "<=" => leftOperand <= rightOperand,
+                    "!=" => leftOperand != rightOperand,
+                    _ => false
+                };
+            }
+            return false;
         }
 
         private string AnalyzeTokens(string statement)
@@ -65,30 +129,14 @@ namespace CodeSense
 
             foreach (var token in tokens)
             {
-               
-                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return", "class", "namespace", "public", "private", "protected", "internal", "static", "readonly", "const", "new", "try", "catch", "finally", "throw", "await", "async", "delegate", "event", "this", "base", "using", "virtual", "override", "abstract", "interface", "enum", "struct", "in", "out", "ref" }, keyword => keyword == token))
+                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "bool", "if", "else", "for", "while", "return", "class", "public", "private", "null", "try", "catch", "var" }, keyword => keyword == token))
                     result.AppendLine($"{token} is a keyword");
-
-           
-                else if (Array.Exists(new[] { "Console.WriteLine", "Console.ReadLine", "Console.Read", "Convert.ToString", "Convert.ToInt32", "Convert.ToDouble", "Math.Abs", "Math.Sqrt", "Math.Pow", "Math.Ceiling", "Math.Floor", "Math.Round", "Math.Log", "Math.Exp", "Math.Sin", "Math.Cos", "Math.Tan", "Math.Asin", "Math.Acos", "Math.Atan", "Array.Sort", "Array.Reverse", "List<T>.Add", "List<T>.Remove", "Dictionary<TKey, TValue>.Add", "Dictionary<TKey, TValue>.Remove", "Task.Delay", "Task.WhenAll", "Task.WhenAny", "async", "await", "string.Concat", "string.Join", "string.Split", "string.Replace", "string.ToLower", "string.ToUpper", "string.Contains", "string.IndexOf", "string.Substring", "string.Trim", "File.Exists", "File.ReadAllText", "Directory.Exists", "Path.Combine", "Path.GetDirectoryName", "Guid.NewGuid", "DateTime.Now", "DateTime.Parse" }, op => op == token))
-                    result.AppendLine($"{token} is a built-in function or method");
-
-               
-                else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!", "=", "+=", "-=", "*=", "/=", "%=" }, op => op == token))
+                else if (Array.Exists(new[] { "Console.WriteLine", "Console.ReadLine" }, op => op == token))
+                    result.AppendLine($"{token} is a built-in function");
+                else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!" }, op => op == token))
                     result.AppendLine($"{token} is an operator");
-
-              
-                else if (Array.Exists(new[] { "int", "string", "bool", "float", "double", "char", "decimal", "long", "short", "byte", "sbyte", "uint", "ulong", "ushort", "object", "var" }, type => type == token))
-                    result.AppendLine($"{token} is a data type");
-
-                else if (Regex.IsMatch(token, @"^[a-zA-Z_][a-zA-Z0-9_]*$"))
-                    result.AppendLine($"{token} is an identifier");
-
-               
                 else if (double.TryParse(token, out _))
                     result.AppendLine($"{token} is a number");
-
-                
                 else
                     result.AppendLine($"{token} is a variable");
             }
@@ -98,9 +146,14 @@ namespace CodeSense
 
         private string[] Tokenize(string statement)
         {
-          
-            var tokens = Regex.Split(statement, @"([^\w\.]+)").Where(token => !string.IsNullOrEmpty(token)).ToArray();
-            return tokens;
+            string pattern = @"(\b(?:if|else|for|while|return|int|string|public|private|void|Console\.WriteLine|Console\.ReadLine|null|bool|try|catch|var)\b|""[^""]*"")|([+\-*/%=();,<>!&|])|\b\w+\b";
+            return Regex.Matches(statement, pattern)
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .Where(token => !string.IsNullOrWhiteSpace(token))
+                        .ToArray();
         }
     }
 }
+
+

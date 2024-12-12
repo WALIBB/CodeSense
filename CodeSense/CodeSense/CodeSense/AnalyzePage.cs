@@ -52,16 +52,16 @@ namespace CodeSense
                 FinalResult.Text = resultBuilder.ToString();
             }
 
-            
+
             FinalResult.Size = TextRenderer.MeasureText(FinalResult.Text, FinalResult.Font);
 
-            
+
             FinalResult.Location = new Point(
-                (ClientSize.Width - FinalResult.Width) / 2,  
-                label2.Location.Y + label2.Height + 10  
+                (ClientSize.Width - FinalResult.Width) / 2,
+                label2.Location.Y + label2.Height + 10
             );
         }
-      
+
 
 
 
@@ -75,21 +75,31 @@ namespace CodeSense
 
         private void OnThemeChanged(ThemeManager.Mode mode)
         {
-            
+
             ApplyTheme();
         }
 
         private void ApplyTheme()
         {
-           
+
             ThemeManager.ApplyTheme(this);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            
+
             ThemeManager.OnThemeChanged -= OnThemeChanged;
             base.OnFormClosed(e);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

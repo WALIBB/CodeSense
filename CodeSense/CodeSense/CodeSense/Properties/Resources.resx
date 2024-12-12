@@ -118,23 +118,29 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="code-icon-png-51" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\code-icon-png-51.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="1022330" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1022330.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cover.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Back-Transparent-Background-PNG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Back-Transparent-Background-PNG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="code-icon-png-5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\code-icon-png-5.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="coding-png-11" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\coding-png-11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="R (12)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\R (12).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="coding-png-111" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\coding-png-111.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="R (12)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\R (12)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Programming-1024 (1)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Programming-1024 (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Programming-1024 (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Programming-1024 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,8 +151,11 @@
   <data name="13557_-_Tester-512" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\13557_-_Tester-512.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="coding-png-111" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\coding-png-111.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Screenshot 2024-11-06 164327" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Screenshot 2024-11-06 164327.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Programming-1024 (1)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Programming-1024 (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Screenshot 2024-11-06 164128" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Screenshot 2024-11-06 164128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -154,13 +163,13 @@
   <data name="pythonlogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pythonlogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Screenshot 2024-11-06 164327" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Screenshot 2024-11-06 164327.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="R (12)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\R (12).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="76818" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\76818.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Back-Transparent-Background-PNG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Back-Transparent-Background-PNG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="6841042" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\6841042.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
