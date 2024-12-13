@@ -15,18 +15,10 @@ namespace CodeSense
             InitializeComponent();
             analyzer = statementAnalyzer;
 
-            lblLanguage.Text = $"Selected Language: {analyzer.GetType().Name.Replace("StatementAnalyzer", "")}";
-            lblLanguage.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblLanguage.Size = TextRenderer.MeasureText(lblLanguage.Text, lblLanguage.Font);
-            lblLanguage.Location = new Point(
-                (ClientSize.Width - lblLanguage.Width) / 2,
-                textBox1.Location.Y - lblLanguage.Height - 10
-            );
-
-            // Apply the current theme initially
+            
             ApplyTheme();
 
-            // Subscribe to theme change event
+          
             ThemeManager.OnThemeChanged += OnThemeChanged;
         }
 
@@ -52,55 +44,43 @@ namespace CodeSense
                 FinalResult.Text = resultBuilder.ToString();
             }
 
-
+            
             FinalResult.Size = TextRenderer.MeasureText(FinalResult.Text, FinalResult.Font);
-
-
             FinalResult.Location = new Point(
                 (ClientSize.Width - FinalResult.Width) / 2,
                 label2.Location.Y + label2.Height + 10
             );
         }
 
-
-
-
-
         private void AnalyzeBack_Click(object sender, EventArgs e)
         {
-            LanguageSelect languageSelectPage = new LanguageSelect();
-            languageSelectPage.Show();
-            this.Hide();
+            
+            FormManager.SwitchForm(this, new LanguageSelect());
         }
 
         private void OnThemeChanged(ThemeManager.Mode mode)
         {
-
             ApplyTheme();
         }
 
         private void ApplyTheme()
         {
-
+            
             ThemeManager.ApplyTheme(this);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-
+            
             ThemeManager.OnThemeChanged -= OnThemeChanged;
             base.OnFormClosed(e);
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
+        
+        private void label2_Click(object sender, EventArgs e) { }
 
-        }
-
-        private void pictureBox4_Click(object sender, EventArgs e)
-        {
-
-        }
+       
+        private void pictureBox4_Click(object sender, EventArgs e) { }
     }
 }
 

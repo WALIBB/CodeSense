@@ -10,30 +10,32 @@ namespace CodeSense
         public string AnalyzeStatement(string statement)
         {
             statement = statement.Trim();
-                  
-           
+
             if (statement == "cout")
                 return "cout is a shorthand for std::cout (used for output).";
             if (statement == "std::cout")
                 return "std::cout is used for output in C++.";
 
-            
             if (statement.StartsWith("std::cout"))
                 return AnalyzeCout(statement);
             if (statement.StartsWith("if"))
                 return AnalyzeIfStatement(statement);
+            if (Regex.IsMatch(statement, @"^\"".*\""$"))
+            {
+                return $"{statement} is a string literal";
+            }
+            if (IsMathExpression(statement))
+            {
+                return $"{statement} is a mathematical expression";
+            }
 
-            
             return AnalyzeTokens(statement);
         }
-
 
         private string AnalyzeCout(string statement)
         {
             statement = statement.Trim();
 
-        
-    
             if (!statement.StartsWith("std::cout") && !statement.StartsWith("cout"))
                 return $"{statement} is an invalid output statement (missing cout)";
             if (!statement.Contains("<<"))
@@ -43,7 +45,6 @@ namespace CodeSense
             if (!statement.Contains('"'))
                 return $"{statement} is an invalid output statement";
 
-           
             var match = Regex.Match(statement, @"(std::cout|cout)\s*<<\s*(.*);");
             if (match.Success)
             {
@@ -54,21 +55,17 @@ namespace CodeSense
             return $"{statement} is an invalid output statement";
         }
 
-
         private string AnalyzeCin(string statement)
         {
-         
             statement = statement.Trim();
 
-            
             if (!statement.StartsWith("std::cin"))
                 return $"{statement} is an invalid input statement (missing std::cin)";
             if (!statement.Contains(">>"))
-                return $"{statement} is an invalid input statement (>>)";
+                return $"{statement} is an invalid input statement (>> missing)";
             if (!statement.EndsWith(";"))
                 return $"{statement} is an invalid input statement (missing semicolon)";
 
-           
             var match = Regex.Match(statement, @"std::cin\s*>>\s*(.*);");
             if (match.Success)
             {
@@ -79,7 +76,6 @@ namespace CodeSense
             return $"{statement} is an invalid input statement";
         }
 
-        
         private string AnalyzeIfStatement(string statement)
         {
             statement = statement.Trim();
@@ -87,7 +83,7 @@ namespace CodeSense
             if (!statement.StartsWith("if"))
                 return "Invalid conditional statement (missing 'if')";
 
-            var match = Regex.Match(statement, @"if\s*\(([^)]+)\)\s*(\{.*\}|[^\{]*[^{};]+)?\s*;?");
+            var match = Regex.Match(statement, @"if\s*\(([^)]+)\)\s*(\{.*\}|[^{};]+;?)");
 
             if (match.Success)
             {
@@ -103,9 +99,9 @@ namespace CodeSense
                 {
                     if (codeInsideBlock.StartsWith("{") && codeInsideBlock.EndsWith("}"))
                     {
-                        codeInsideBlock = codeInsideBlock[1..^1].Trim(); 
+                        codeInsideBlock = codeInsideBlock[1..^1].Trim();
                     }
-                    return $"The condition is true, {AnalyzeCout(codeInsideBlock)}";
+                    return $"The condition is true, {AnalyzeStatement(codeInsideBlock)}";
                 }
                 else
                 {
@@ -115,10 +111,9 @@ namespace CodeSense
 
             return "Invalid conditional statement (invalid format)";
         }
-        
+
         private bool EvaluateCondition(string condition)
         {
-           
             var match = Regex.Match(condition, @"(\d+)\s*(<=|>=|<|>|==|!=)\s*(\d+)");
             if (match.Success)
             {
@@ -138,7 +133,11 @@ namespace CodeSense
                 };
             }
 
-            return false; 
+            return false;
+        }
+        private bool IsMathExpression(string statement)
+        {
+            return Regex.IsMatch(statement, @"\+|\-|\*|\/|\%|\^");
         }
 
         private string AnalyzeTokens(string statement)
@@ -146,34 +145,53 @@ namespace CodeSense
             var tokens = Tokenize(statement);
             StringBuilder result = new StringBuilder();
 
-            foreach (var token in tokens)
+           
+            if (tokens.Length == 3 && tokens[1] == "=")
+            {
+                result.AppendLine($"{tokens[0]} is a variable, {tokens[1]} is an assignment operator, {tokens[2]} is a value.");
+            }
+           
+            else if (tokens.Length == 3 && IsMathematicalOperator(tokens[1]))
+            {
+                result.AppendLine($"{tokens[0]} is a number, {tokens[1]} is a mathematical operator, {tokens[2]} is a number.");
+            }
+            else
             {
               
-                if (Array.Exists(new[] { "false", "true", "void", "int", "string", "if", "else", "for", "while", "return", "nullptr" }, keyword => keyword == token))
-                    result.AppendLine($"{token} is a keyword");
-                else if (Array.Exists(new[] { "std::cout", "std::cin", "std::cerr", "std::clog", "std::getline", "std::string", "std::to_string" }, op => op == token))
-                    result.AppendLine($"{token} is a built-in function");
-                else if (Array.Exists(new[] { "+", "-", "*", "/", "%", "==", "<", ">", "<=", ">=", "&&", "||", "!" }, op => op == token))
-                    result.AppendLine($"{token} is an operator");
-                else if (double.TryParse(token, out _))
+                foreach (var token in tokens)
                 {
-                    if (token.Contains("."))
-                        result.AppendLine($"{token} is a floating number");
+                    if (Regex.IsMatch(token, @"^(false|true|void|int|string|if|else|for|while|return|nullptr)$"))
+                        result.AppendLine($"{token} is a keyword");
+                    else if (Regex.IsMatch(token, @"^(std::cout|std::cin|std::cerr|std::clog|std::getline|std::string|std::to_string)$"))
+                        result.AppendLine($"{token} is a built-in function");
+                    else if (Regex.IsMatch(token, @"^[+\-*/%==<>!&|]+$"))
+                        result.AppendLine($"{token} is an operator");
+                    else if (double.TryParse(token, out _))
+                    {
+                        if (token.Contains("."))
+                            result.AppendLine($"{token} is a floating number");
+                        else
+                            result.AppendLine($"{token} is an integer");
+                    }
+                    else if (Regex.IsMatch(token, "^\".*\"$"))
+                        result.AppendLine($"{token} is a string literal");
                     else
-                        result.AppendLine($"{token} is an integer");
+                        result.AppendLine($"{token} is a variable");
                 }
-                else
-                    result.AppendLine($"{token} is a variable");
             }
 
             return result.ToString();
         }
 
+        private bool IsMathematicalOperator(string token)
+        {
+            return token == "+" || token == "-" || token == "*" || token == "/" || token == "%";
+        }
+
         private string[] Tokenize(string statement)
         {
-            return Regex.Split(statement, @"(\s+|[+\-*/%=();,<>!&|])").Where(token => !string.IsNullOrWhiteSpace(token)).ToArray();
+           
+            return Regex.Split(statement, @"(\s+|[+\-*/%==();,<>!&|])").Where(token => !string.IsNullOrWhiteSpace(token)).ToArray();
         }
     }
 }
-
-

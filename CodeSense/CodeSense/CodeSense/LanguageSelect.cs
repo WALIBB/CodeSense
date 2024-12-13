@@ -4,29 +4,23 @@ using System.Windows.Forms;
 
 namespace CodeSense
 {
-    public partial class LanguageSelect : Form
+    public partial class LanguageSelect : Form, IThemable
     {
         public LanguageSelect()
         {
             InitializeComponent();
-
-            
             ApplyTheme();
-
-            
             ThemeManager.OnThemeChanged += OnThemeChanged;
         }
 
-        private void ApplyTheme()
+        public void ApplyTheme()
         {
-            
-            ThemeManager.ApplyTheme(this);
+            FormManager.ApplyTheme(this); 
         }
 
         private void OnThemeChanged(ThemeManager.Mode mode)
         {
-           
-            ApplyTheme();
+            ApplyTheme(); 
         }
 
         private void Pythonselect_Click(object sender, EventArgs e)
@@ -62,7 +56,6 @@ namespace CodeSense
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            
             ThemeManager.OnThemeChanged -= OnThemeChanged;
             base.OnFormClosed(e);
         }

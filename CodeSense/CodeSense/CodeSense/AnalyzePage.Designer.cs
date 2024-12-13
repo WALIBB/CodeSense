@@ -43,9 +43,10 @@ namespace CodeSense
             // 
             // lblLanguage
             // 
+            lblLanguage.Anchor = AnchorStyles.None;
             lblLanguage.AutoSize = true;
             lblLanguage.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblLanguage.Location = new Point(282, 50);
+            lblLanguage.Location = new Point(590, 48);
             lblLanguage.Name = "lblLanguage";
             lblLanguage.Size = new Size(0, 32);
             lblLanguage.TabIndex = 0;
@@ -53,6 +54,7 @@ namespace CodeSense
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             label1.Location = new Point(477, 12);
@@ -63,8 +65,9 @@ namespace CodeSense
             // 
             // textBox1
             // 
+            textBox1.Anchor = AnchorStyles.None;
             textBox1.Font = new Font("Segoe UI", 11F);
-            textBox1.Location = new Point(326, 83);
+            textBox1.Location = new Point(329, 83);
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(632, 90);
@@ -73,6 +76,7 @@ namespace CodeSense
             // 
             // DetectButton
             // 
+            DetectButton.Anchor = AnchorStyles.None;
             DetectButton.BackColor = Color.Red;
             DetectButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             DetectButton.ForeColor = Color.FromArgb(255, 255, 128);
@@ -86,6 +90,7 @@ namespace CodeSense
             // 
             // pictureBox1
             // 
+            pictureBox1.Anchor = AnchorStyles.None;
             pictureBox1.BackColor = Color.Transparent;
             pictureBox1.Image = Properties.Resources._13557___Tester_512;
             pictureBox1.Location = new Point(505, 310);
@@ -97,6 +102,7 @@ namespace CodeSense
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.None;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             label2.Location = new Point(590, 242);
@@ -117,6 +123,7 @@ namespace CodeSense
             // 
             // pictureBox2
             // 
+            pictureBox2.Anchor = AnchorStyles.None;
             pictureBox2.BackColor = Color.Transparent;
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
             pictureBox2.Location = new Point(1081, 383);
@@ -128,6 +135,7 @@ namespace CodeSense
             // 
             // pictureBox3
             // 
+            pictureBox3.Anchor = AnchorStyles.None;
             pictureBox3.BackColor = Color.Transparent;
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
             pictureBox3.Location = new Point(12, 64);
@@ -139,6 +147,7 @@ namespace CodeSense
             // 
             // AnalyzeBack
             // 
+            AnalyzeBack.Anchor = AnchorStyles.None;
             AnalyzeBack.BackColor = SystemColors.ActiveCaption;
             AnalyzeBack.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             AnalyzeBack.Location = new Point(12, 12);
@@ -159,6 +168,7 @@ namespace CodeSense
             // 
             // pictureBox4
             // 
+            pictureBox4.Anchor = AnchorStyles.None;
             pictureBox4.Image = Properties.Resources.code_icon_png_51;
             pictureBox4.Location = new Point(152, 383);
             pictureBox4.Name = "pictureBox4";
@@ -170,6 +180,7 @@ namespace CodeSense
             // 
             // pictureBox5
             // 
+            pictureBox5.Anchor = AnchorStyles.None;
             pictureBox5.Image = (Image)resources.GetObject("pictureBox5.Image");
             pictureBox5.Location = new Point(1044, 41);
             pictureBox5.Name = "pictureBox5";
@@ -180,6 +191,7 @@ namespace CodeSense
             // 
             // AppTitle
             // 
+            AppTitle.Anchor = AnchorStyles.None;
             AppTitle.AutoSize = true;
             AppTitle.BackColor = Color.Transparent;
             AppTitle.Font = new Font("Segoe UI Black", 22.8000011F, FontStyle.Bold | FontStyle.Italic);

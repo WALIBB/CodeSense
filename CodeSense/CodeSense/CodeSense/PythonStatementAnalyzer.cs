@@ -11,9 +11,20 @@ namespace CodeSense
         {
             statement = statement.Trim();
 
+            // Detect conditional statements like 9 > 10
             if (Regex.IsMatch(statement, @"^\s*(\d+)\s*(<=|>=|<|>|==|!=)\s*(\d+)\s*$"))
             {
                 return $"{statement} is a conditional statement";
+            }
+            if (Regex.IsMatch(statement, @"^\"".*\""$"))
+            {
+                return $"{statement} is a string literal";
+            }
+
+               
+                if (Regex.IsMatch(statement, @"^\s*if\s+(.*)\s*:\s*$"))
+            {
+                return AnalyzeIfStatement(statement);
             }
 
             
@@ -28,17 +39,19 @@ namespace CodeSense
                 return AnalyzePrintStatement(statement);
             }
 
+           
             if (Regex.IsMatch(statement, @"^\s*input\s*\(.*\)\s*$"))
             {
                 return AnalyzeInputStatement(statement);
             }
 
+            
             if (statement.StartsWith("#"))
             {
                 return $"{statement} is a comment";
             }
 
-            
+           
             if (IsMathExpression(statement))
             {
                 return $"{statement} is a mathematical expression";
@@ -49,24 +62,32 @@ namespace CodeSense
             {
                 return $"{statement} is an assignment";
             }
-          
+
             
             return AnalyzeTokens(statement);
         }
 
         private string AnalyzeIfStatement(string statement)
         {
-           
-            var match = Regex.Match(statement, @"if\s+(.*):\s*(.*)");
+          
+            var match = Regex.Match(statement, @"^\s*if\s+(.*)\s*:\s*$");
             if (match.Success)
             {
-                string condition = match.Groups[1].Value.Trim(); 
-                string block = match.Groups[2].Value.Trim();     
+                string condition = match.Groups[1].Value.Trim();
+                bool conditionIsTrue = EvaluateCondition(condition);
+                return conditionIsTrue
+                    ? $"The condition {condition} is true, but there is no code block following."
+                    : $"The condition {condition} is false, so no code will be executed.";
+            }
 
-               
+            
+            match = Regex.Match(statement, @"^\s*if\s+(.*):\s*(.*)$");
+            if (match.Success)
+            {
+                string condition = match.Groups[1].Value.Trim();
+                string block = match.Groups[2].Value.Trim();
                 bool conditionIsTrue = EvaluateCondition(condition);
 
-               
                 if (conditionIsTrue)
                 {
                     if (block.StartsWith("print"))
@@ -89,7 +110,6 @@ namespace CodeSense
 
         private bool EvaluateCondition(string condition)
         {
-           
             var match = Regex.Match(condition, @"(\d+)\s*(<=|>=|<|>|==|!=)\s*(\d+)");
             if (match.Success)
             {
@@ -105,7 +125,7 @@ namespace CodeSense
                     ">=" => leftOperand >= rightOperand,
                     "<=" => leftOperand <= rightOperand,
                     "!=" => leftOperand != rightOperand,
-                    _ => false,
+                    _ => false
                 };
             }
 

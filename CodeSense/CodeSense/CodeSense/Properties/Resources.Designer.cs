@@ -163,9 +163,30 @@ namespace CodeSense.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap OIP__19_ {
+            get {
+                object obj = ResourceManager.GetObject("OIP (19)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap OIP__9_ {
             get {
                 object obj = ResourceManager.GetObject("OIP (9)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap png_transparent_language_icon_circle_pictogram_black_and_white_line_symbol_logo_emblem {
+            get {
+                object obj = ResourceManager.GetObject("png-transparent-language-icon-circle-pictogram-black-and-white-line-symbol-logo-e" +
+                        "mblem", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -186,6 +207,16 @@ namespace CodeSense.Properties {
         internal static System.Drawing.Bitmap Programming_1024__1_1 {
             get {
                 object obj = ResourceManager.GetObject("Programming-1024 (1)1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap python_logo_png_open_2000 {
+            get {
+                object obj = ResourceManager.GetObject("python-logo-png-open-2000", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
